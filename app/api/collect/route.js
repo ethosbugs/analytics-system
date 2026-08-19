@@ -12,9 +12,12 @@ const corsHeaders = {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { site_id, event_name, session_id, url, path, referrer, user_agent } = body;
+    const { site_id, event_name, event_type, session_id, url, path, referrer, user_agent } = body;
 
-    if (!site_id || !event_name || !session_id) {
+    // Aceptamos event_type o event_name para no romper llamadas
+    const typeOfEvent = event_type || event_name;
+
+    if (!site_id || !typeOfEvent) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
         headers: corsHeaders,
@@ -24,12 +27,14 @@ export async function POST(req) {
     const { data, error } = await supabase.from("events").insert([
       {
         site_id,
-        event_name,
-        session_id,
-        url,
-        path,
-        referrer,
-        user_agent,
+        event_type: typeOfEvent,
+        payload: {
+          session_id,
+          url,
+          path,
+          referrer,
+          user_agent,
+        },
       },
     ]);
 
