@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio</title>
+<style>
+  :root{
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.18);
+    --glass-blur: 18px;
+    --text: #f4f4f8;
+    --text-dim: rgba(244,244,248,0.65);
+    --accent: #7c8cff;
+    --danger: #ff6e7a;
+    --radius: 18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    background-color:#0b0d17;
+    background-size: cover;
+    background-position:center;
+    background-attachment:fixed;
+    transition: background-image 1.2s ease-in-out;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: rgba(5,6,12,0.45);
+    backdrop-filter: blur(0px);
+    z-index:-1;
+  }
+
+  .glass{
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+
+  .wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 32px;
+    min-height:100vh;
+  }
+
+  /* ---------- CLOCK ---------- */
+  .clock-section{
+    text-align:center;
+    margin-top: 20px;
+    padding: 10px;
+  }
+  .greeting{
+    font-size: 18px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .clock{
+    font-size: clamp(64px, 12vw, 130px);
+    font-weight: 200;
+    letter-spacing: 4px;
+    line-height: 1;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  }
+  .date{
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    text-transform: capitalize;
+  }
+
+  /* ---------- SEARCH ---------- */
+  .search-section{
+    width: 100%;
+    max-width: 680px;
+    display:flex;
+    gap: 10px;
+    padding: 10px 10px;
+  }
+  .search-section select{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 14px;
+    cursor:pointer;
+    outline:none;
+  }
+  .search-section select option{ color:#111; }
+  .search-box{
+    flex:1;
+    display:flex;
+    align-items:center;
+    border-radius: 14px;
+    padding: 4px 4px 4px 18px;
+  }
+  .search-box input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color: var(--text);
+    font-size: 16px;
+    padding: 14px 8px;
+  }
+  .search-box input::placeholder{ color: var(--text-dim); }
+  .search-box button{
+    background: var(--accent);
+    border:none;
+    color:#fff;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .search-box button:hover{ transform: translateY(-1px); opacity:.9; }
+
+  /* ---------- GRID ---------- */
+  .grid{
+    width:100%;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items:start;
+  }
+  @media (max-width: 900px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    padding: 22px;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  .panel h2{
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  /* ---------- POMODORO ---------- */
+  .pomodoro{
+    align-items:center;
+    text-align:center;
+  }
+  .pomo-mode-tabs{
+    display:flex;
+    gap:8px;
+    background: rgba(255,255,255,0.05);
+    padding:4px;
+    border-radius: 10px;
+  }
+  .pomo-mode-tabs button{
+    flex:1;
+    background:transparent;
+    border:none;
+    color: var(--text-dim);
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor:pointer;
+    font-size:13px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .pomo-mode-tabs button.active{
+    background: var(--accent);
+    color:#fff;
+  }
+  .pomo-time{
+    font-size: 56px;
+    font-weight:300;
+    letter-spacing:2px;
+    margin: 6px 0;
+  }
+  .pomo-controls{
+    display:flex;
+    gap:10px;
+    width:100%;
+  }
+  .pomo-controls button{
+    flex:1;
+    border:none;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .pomo-controls button:hover{ transform: translateY(-1px); }
+  .btn-start{ background: linear-gradient(135deg,#4caf6d,#7fd996); }
+  .btn-pause{ background: linear-gradient(135deg,#e8a33d,#f4c968); }
+  .btn-reset{ background: rgba(255,255,255,0.1); }
+
+  /* ---------- TODO ---------- */
+  .todo-input-row{
+    display:flex;
+    gap:8px;
+  }
+  .todo-input-row input{
+    flex:1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    outline:none;
+    font-size:14px;
+  }
+  .todo-input-row button{
+    background: var(--accent);
+    border:none;
+    color:#fff;
+    border-radius: 10px;
+    padding: 0 16px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .todo-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height: 260px;
+    overflow-y:auto;
+  }
+  .todo-list::-webkit-scrollbar{ width:6px; }
+  .todo-list::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.2); border-radius:4px; }
+  .todo-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size:14px;
+  }
+  .todo-item .check{
+    width:18px; height:18px;
+    border: 2px solid var(--text-dim);
+    border-radius:5px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px;
+  }
+  .todo-item.done .check{
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .todo-item.done span.txt{
+    text-decoration: line-through;
+    color: var(--text-dim);
+  }
+  .todo-item span.txt{ flex:1; word-break:break-word; }
+  .todo-item .del{
+    background:transparent; border:none; color: var(--danger);
+    cursor:pointer; font-size:16px; opacity:.7;
+  }
+  .todo-item .del:hover{ opacity:1; }
+  .todo-empty{ color: var(--text-dim); font-size:13px; text-align:center; padding:10px 0; }
+
+  /* ---------- BOOKMARKS ---------- */
+  .bookmarks-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .bookmark{
+    position:relative;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align:center;
+    cursor:pointer;
+    text-decoration:none;
+    color: var(--text);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    transition: transform .15s ease, background .2s ease;
+    font-size:12px;
+    overflow:hidden;
+  }
+  .bookmark:hover{ transform: translateY(-2px); background: rgba(255,255,255,0.09); }
+  .bookmark .favicon{
+    width:22px; height:22px;
+    border-radius:6px;
+  }
+  .bookmark .name{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    width:100%;
+  }
+  .bookmark .remove-btn{
+    position:absolute; top:2px; right:4px;
+    background:transparent; border:none;
+    color: var(--danger);
+    font-size:14px;
+    cursor:pointer;
+    opacity:0;
+    transition: opacity .15s ease;
+  }
+  .bookmark:hover .remove-btn{ opacity:1; }
+  .bookmark.add-new{
+    border-style: dashed;
+    color: var(--text-dim);
+    font-size: 22px;
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.55);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:100;
+    padding: 20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    padding: 26px;
+    width: 100%;
+    max-width: 340px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .modal h3{ font-size:16px; font-weight:600; }
+  .modal input{
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    outline:none;
+    font-size:14px;
+  }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:6px;
+  }
+  .modal-actions button{
+    flex:1;
+    border:none;
+    border-radius: 10px;
+    padding: 10px 0;
+    cursor:pointer;
+    font-weight:600;
+    color:#fff;
+  }
+  .modal-save{ background: var(--accent); }
+  .modal-cancel{ background: rgba(255,255,255,0.1); }
+
+  footer{
+    color: var(--text-dim);
+    font-size:12px;
+    text-align:center;
+    padding-top: 10px;
+    display:flex;
+    gap:16px;
+    align-items:center;
+  }
+  footer button{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor:pointer;
+    font-size:12px;
+  }
+  footer button:hover{ color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="clock-section">
+    <div class="greeting" id="greeting">Buenos días</div>
+    <div class="clock" id="clock">00:00</div>
+    <div class="date" id="date">lunes, 1 de enero</div>
+  </div>
+
+  <div class="search-section glass">
+    <select id="engineSelect">
+      <option value="google">Google</option>
+      <option value="youtube">YouTube</option>
+      <option value="wikipedia">Wikipedia</option>
+      <option value="github">GitHub</option>
+    </select>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Buscar en la web...">
+      <button id="searchBtn">Buscar</button>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="panel glass pomodoro">
+      <h2>🍅 Pomodoro</h2>
+      <div class="pomo-mode-tabs">
+        <button id="modeWork" class="active">Trabajo · 25m</button>
+        <button id="modeBreak">Descanso · 5m</button>
+      </div>
+      <div class="pomo-time" id="pomoTime">25:00</div>
+      <div class="pomo-controls">
+        <button class="btn-start" id="pomoStart">Iniciar</button>
+        <button class="btn-pause" id="pomoPause">Pausar</button>
+        <button class="btn-reset" id="pomoReset">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="panel glass">
+      <h2>✅ Tareas pendientes</h2>
+      <div class="todo-input-row">
+        <input type="text" id="todoInput" placeholder="Nueva tarea...">
+        <button id="todoAddBtn">Añadir</button>
+      </div>
+      <ul class="todo-list" id="todoList"></ul>
+    </div>
+
+    <div class="panel glass">
+      <h2>🔗 Marcadores rápidos</h2>
+      <div class="bookmarks-grid" id="bookmarksGrid"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span id="quoteFooter">Escritorio personal</span>
+    <button id="refreshBgBtn">🔄 Cambiar fondo</button>
+  </footer>
+
+</div>
+
+<div class="modal-overlay" id="bookmarkModal">
+  <div class="modal glass">
+    <h3>Nuevo marcador</h3>
+    <input type="text" id="bmName" placeholder="Nombre (ej. Gmail)">
+    <input type="text" id="bmUrl" placeholder="URL (ej. https://gmail.com)">
+    <div class="modal-actions">
+      <button class="modal-cancel" id="bmCancel">Cancelar</button>
+      <button class="modal-save" id="bmSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FONDO DINÁMICO
+   ============================================================ */
+function setRandomBackground(){
+  const seed = Math.floor(Math.random()*10000);
+  const url = `https://picsum.photos/seed/${seed}/1920/1080`;
+  const img = new Image();
+  img.onload = () => { document.body.style.backgroundImage = `url('${url}')`; };
+  img.onerror = () => { /* si falla, se mantiene el color de fondo por defecto */ };
+  img.src = url;
+}
+document.getElementById('refreshBgBtn').addEventListener('click', setRandomBackground);
+setRandomBackground();
+
+/* ============================================================
+   RELOJ / SALUDO / FECHA
+   ============================================================ */
+const DAYS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function updateClock(){
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  document.getElementById('date').textContent = `${DAYS[now.getDay()]}, ${now.getDate()} de ${MONTHS[now.getMonth()]}`;
+
+  const hour = now.getHours();
+  let greeting = 'Buenos días';
+  if(hour >= 12 && hour < 20) greeting = 'Buenas tardes';
+  else if(hour >= 20 || hour < 6) greeting = 'Buenas noches';
+  document.getElementById('greeting').textContent = greeting;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ============================================================
+   BÚSQUEDA
+   ============================================================ */
+const SEARCH_URLS = {
+  google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+  youtube: q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
+  wikipedia: q => `https://es.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+  github: q => `https://github.com/search?q=${encodeURIComponent(q)}`
+};
+
+function doSearch(){
+  const q = document.getElementById('searchInput').value.trim();
+  if(!q) return;
+  const engine = document.getElementById('engineSelect').value;
+  const url = SEARCH_URLS[engine](q);
+  window.open(url, '_blank');
+  document.getElementById('searchInput').value = '';
+}
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+document.getElementById('searchInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') doSearch();
+});
+
+/* ============================================================
+   POMODORO
+   ============================================================ */
+const pomo = {
+  workMinutes: 25,
+  breakMinutes: 5,
+  mode: 'work',
+  remaining: 25*60,
+  running: false,
+  interval: null
+};
+
+function pomoRender(){
+  const m = String(Math.floor(pomo.remaining/60)).padStart(2,'0');
+  const s = String(pomo.remaining%60).padStart(2,'0');
+  document.getElementById('pomoTime').textContent = `${m}:${s}`;
+  document.title = pomo.running ? `${m}:${s} · ${pomo.mode==='work'?'Trabajo':'Descanso'}` : 'Inicio';
+}
+
+function pomoSwitchMode(mode){
+  pomo.mode = mode;
+  pomo.remaining = (mode==='work' ? pomo.workMinutes : pomo.breakMinutes) * 60;
+  document.getElementById('modeWork').classList.toggle('active', mode==='work');
+  document.getElementById('modeBreak').classList.toggle('active', mode==='break');
+  pomoRender();
+}
+
+document.getElementById('modeWork').addEventListener('click', ()=>{
+  pomoPauseInternal();
+  pomoSwitchMode('work');
+});
+document.getElementById('modeBreak').addEventListener('click', ()=>{
+  pomoPauseInternal();
+  pomoSwitchMode('break');
+});
+
+function pomoTick(){
+  if(pomo.remaining <= 0){
+    clearInterval(pomo.interval);
+    pomo.running = false;
+    // notificación simple
+    try{
+      if(Notification && Notification.permission === 'granted'){
+        new Notification(pomo.mode==='work' ? '¡Tiempo de trabajo terminado!' : '¡Descanso terminado!');
+      }
+    }catch(e){}
+    // auto-cambia de modo
+    pomoSwitchMode(pomo.mode==='work' ? 'break' : 'work');
+    return;
+  }
+  pomo.remaining--;
+  pomoRender();
+}
+
+document.getElementById('pomoStart').addEventListener('click', ()=>{
+  if(pomo.running) return;
+  pomo.running = true;
+  try{ if(Notification && Notification.permission === 'default') Notification.requestPermission(); }catch(e){}
+  pomo.interval = setInterval(pomoTick, 1000);
+});
+
+function pomoPauseInternal(){
+  pomo.running = false;
+  clearInterval(pomo.interval);
+}
+document.getElementById('pomoPause').addEventListener('click', pomoPauseInternal);
+
+document.getElementById('pomoReset').addEventListener('click', ()=>{
+  pomoPauseInternal();
+  pomoSwitchMode(pomo.mode);
+});
+
+pomoRender();
+
+/* ============================================================
+   TO-DO LIST (con localStorage)
+   ============================================================ */
+const TODO_KEY = 'dashboard_todos';
+
+function loadTodos(){
+  return JSON.parse(localStorage.getItem(TODO_KEY) || '[]');
+}
+function saveTodos(todos){
+  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+}
+
+function renderTodos(){
+  const todos = loadTodos();
+  const list = document.getElementById('todoList');
+  list.innerHTML = '';
+  if(todos.length === 0){
+    list.innerHTML = '<div class="todo-empty">No hay tareas todavía. ¡Añade una!</div>';
+    return;
+  }
+  todos.forEach((todo, idx)=>{
+    const li = document.createElement('li');
+    li.className = 'todo-item' + (todo.done ? ' done' : '');
+    li.innerHTML = `
+      <div class="check">${todo.done ? '✓' : ''}</div>
+      <span class="txt"></span>
+      <button class="del">✕</button>
+    `;
+    li.querySelector('.txt').textContent = todo.text;
+    li.querySelector('.check').addEventListener('click', ()=> toggleTodo(idx));
+    li.querySelector('.del').addEventListener('click', ()=> deleteTodo(idx));
+    list.appendChild(li);
+  });
+}
+
+function addTodo(){
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const todos = loadTodos();
+  todos.push({ text, done:false });
+  saveTodos(todos);
+  input.value = '';
+  renderTodos();
+}
+function toggleTodo(idx){
+  const todos = loadTodos();
+  todos[idx].done = !todos[idx].done;
+  saveTodos(todos);
+  renderTodos();
+}
+function deleteTodo(idx){
+  const todos = loadTodos();
+  todos.splice(idx,1);
+  saveTodos(todos);
+  renderTodos();
+}
+
+document.getElementById('todoAddBtn').addEventListener('click', addTodo);
+document.getElementById('todoInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') addTodo();
+});
+
+renderTodos();
+
+/* ============================================================
+   MARCADORES RÁPIDOS (con localStorage)
+   ============================================================ */
+const BOOKMARKS_KEY = 'dashboard_bookmarks';
+const DEFAULT_BOOKMARKS = [
+  { name:'Gmail', url:'https://mail.google.com' },
+  { name:'YouTube', url:'https://youtube.com' },
+  { name:'GitHub', url:'https://github.com' },
+];
+
+function loadBookmarks(){
+  const raw = localStorage.getItem(BOOKMARKS_KEY);
+  if(raw === null){
+    saveBookmarks(DEFAULT_BOOKMARKS);
+    return DEFAULT_BOOKMARKS.slice();
+  }
+  return JSON.parse(raw);
+}
+function saveBookmarks(bms){
+  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bms));
+}
+
+function faviconFor(url){
+  try{
+    const u = new URL(url);
+    return `https://www.google.com/s2/favicons?sz=64&domain=${u.hostname}`;
+  }catch(e){
+    return '';
+  }
+}
+
+function renderBookmarks(){
+  const bms = loadBookmarks();
+  const grid = document.getElementById('bookmarksGrid');
+  grid.innerHTML = '';
+  bms.forEach((bm, idx)=>{
+    const a = document.createElement('a');
+    a.className = 'bookmark';
+    a.href = bm.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.innerHTML = `
+      <button class="remove-btn" title="Eliminar">✕</button>
+      <img class="favicon" src="${faviconFor(bm.url)}" onerror="this.style.display='none'">
+      <span class="name"></span>
+    `;
+    a.querySelector('.name').textContent = bm.name;
+    a.querySelector('.remove-btn').addEventListener('click', (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      removeBookmark(idx);
+    });
+    grid.appendChild(a);
+  });
+
+  const addBtn = document.createElement('div');
+  addBtn.className = 'bookmark add-new';
+  addBtn.textContent = '+';
+  addBtn.addEventListener('click', openBookmarkModal);
+  grid.appendChild(addBtn);
+}
+
+function removeBookmark(idx){
+  const bms = loadBookmarks();
+  bms.splice(idx,1);
+  saveBookmarks(bms);
+  renderBookmarks();
+}
+
+function openBookmarkModal(){
+  document.getElementById('bmName').value = '';
+  document.getElementById('bmUrl').value = '';
+  document.getElementById('bookmarkModal').classList.add('show');
+  document.getElementById('bmName').focus();
+}
+function closeBookmarkModal(){
+  document.getElementById('bookmarkModal').classList.remove('show');
+}
+
+document.getElementById('bmCancel').addEventListener('click', closeBookmarkModal);
+document.getElementById('bookmarkModal').addEventListener('click', (e)=>{
+  if(e.target.id === 'bookmarkModal') closeBookmarkModal();
+});
+
+document.getElementById('bmSave').addEventListener('click', ()=>{
+  let name = document.getElementById('bmName').value.trim();
+  let url = document.getElementById('bmUrl').value.trim();
+  if(!name || !url) return;
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  const bms = loadBookmarks();
+  bms.push({ name, url });
+  saveBookmarks(bms);
+  closeBookmarkModal();
+  renderBookmarks();
+});
+
+renderBookmarks();
+</script>
+</body>
+</html>
